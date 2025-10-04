@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resource Tracker - RescueHub Connect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gray: #64748b;
+        }
+        
+        body {
+            background-color: #f1f5f9;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo-icon {
+            color: var(--primary);
+            font-size: 28px;
+        }
+        
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .emergency-btn {
+            background-color: var(--danger);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .emergency-btn:hover {
+            background-color: #dc2626;
+            transform: translateY(-2px);
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+            padding: 40px 0;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 30px;
+        }
+        
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        /* Section Styles */
+        .section-title {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2rem;
+            color: var(--dark);
+        }
+        
+        .section-subtitle {
+            text-align: center;
+            margin-bottom: 40px;
+            color: var(--gray);
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Resource Dashboard */
+        .resource-dashboard {
+            padding: 30px 0;
+        }
+        
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .dashboard-card {
+            background-color: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            padding: 20px;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-body {
+            padding: 20px;
+        }
+        
+        .resource-list {
+            list-style: none;
+        }
+        
+        .resource-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .resource-item:last-child {
+            border-bottom: none;
+        }
+        
+        .availability {
+            font-weight: 600;
+        }
+        
+        .availability.high {
+            color: var(--secondary);
+        }
+        
+        .availability.medium {
+            color: var(--warning);
+        }
+        
+        .availability.low {
+            color: var(--danger);
+        }
+        
+        /* Live Tracker */
+        .live-tracker {
+            padding: 30px 0;
+            background-color: #f8fafc;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+        
+        .tracker-container {
+            background-color: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .tracker-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--secondary);
+            font-weight: 600;
+        }
+        
+        .pulse {
+            width: 12px;
+            height: 12px;
+            background-color: var(--secondary);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+        
+        .tracker-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .tracker-item {
+            background-color: #f8fafc;
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .tracker-label {
+            font-weight: 600;
+            color: var(--gray);
+        }
+        
+        .tracker-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        /* Shelter Details */
+        .shelter-details {
+            padding: 30px 0;
+        }
+        
+        .shelter-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .shelter-tab {
+            background-color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .shelter-tab:hover, .shelter-tab.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .shelter-content {
+            display: none;
+        }
+        
+        .shelter-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .shelter-info {
+            background-color: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+        
+        .shelter-name {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        .shelter-meta {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--gray);
+        }
+        
+        .resource-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .category-card {
+            background-color: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .category-header {
+            padding: 15px 20px;
+            background-color: var(--secondary);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .category-body {
+            padding: 20px;
+        }
+        
+        .supply-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .supply-item:last-child {
+            border-bottom: none;
+        }
+        
+        .supply-status {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        
+        .status-high {
+            background-color: var(--secondary);
+        }
+        
+        .status-medium {
+            background-color: var(--warning);
+        }
+        
+        .status-low {
+            background-color: var(--danger);
+        }
+        
+        /* Essential Supplies */
+        .essential-supplies {
+            padding: 30px 0;
+            background-color: #f0f9ff;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+        
+        .supplies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .supply-card {
+            background-color: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            text-align: center;
+        }
+        
+        .supply-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 40px 0 20px;
+            margin-top: 50px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .footer-section h3 {
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #334155;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .dashboard-cards, .resource-categories, .supplies-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .shelter-meta {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-hands-helping logo-icon"></i>
+                    <div class="logo-text">RescueHub Connect</div>
+                </div>
+                <a href="#" class="emergency-btn">
+                    <i class="fas fa-phone-alt"></i>
+                    Emergency Help
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Resource Availability Tracker</h1>
+                <p>Real-time information on food, supplies, and essentials across all relief shelters</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Resource Dashboard -->
+    <section class="resource-dashboard">
+        <div class="container">
+            <h2 class="section-title">Shelter Resource Dashboard</h2>
+            <p class="section-subtitle">Live updates on availability of food, clothing, and essential supplies across all active shelters</p>
+            
+            <div class="dashboard-cards">
+                <!-- Food Availability -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <i class="fas fa-utensils"></i>
+                        <h3>Food Availability</h3>
+                    </div>
+                    <div class="card-body">
+                        <ul class="resource-list">
+                            <li class="resource-item">
+                                <span>Greenwood High School</span>
+                                <span class="availability high">Adequate</span>
+                            </li>
+                            <li class="resource-item">
+                                <span>Community Center</span>
+                                <span class="availability medium">Limited</span>
+                            </li>
+                            <li class="resource-item">
+                                <span>City Stadium</span>
+                                <span class="availability low">Critical</span>
+                            </li>
+                            <li class="resource-item">
+                                <span>St. Mary's Church</span>
+                                <span class="availability high">Adequate</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Medical Supplies -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <i class="fas fa-first-aid"></i>
+                        <h3>Medical Supplies</h3>
+                    </div>
+                    <div class="card-body">
+                        <ul class="resource-list">
+                            <li class="resource-item">
+                                <span>First Aid Kits</span>
+                                <span class="availability medium">Moderate</span>
+                            </li>
+                            <li class="resource-item">
+                                <span>Prescription Meds</span>
+                                <span class="availability low">Low</span>
+                            </li>
+                            <li class="resource-item">
+                                <span>Sanitary Supplies</span>
+                                <span class="availability high">Adequate</span>
+                            </li>
+                            <li class="resource-item">
+                                <span>Baby Care Items</span>
+                                <span class="availability medium">Moderate</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Clothing & Bedding -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <i class="fas fa-tshirt"></i>
+                        <h3>Clothing & Bedding</h3>
+                    </div>
+                    <div class="card-body">
+                        <ul class="resource-list">
+                            <li class="resource-item">
+                                <span>Blankets</span>
+                                <span class="availability high">Adequate</span>
+                            </li>
+                            <li class="resource-item">
+                                <span>Winter Clothing</span>
+                                <span class="availability low">Critical</span>
+                            </li>
+                            <li class="resource-item">
+                                <span>Footwear</span>
+                                <span class="availability medium">Moderate</span>
+                            </li>
+                            <li class="resource-item">
+                                <span>Children's Clothes</span>
+                                <span class="availability high">Adequate</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Tracker -->
+    <section class="live-tracker">
+        <div class="container">
+            <div class="tracker-container">
+                <div class="tracker-header">
+                    <h2>Live Resource Tracker</h2>
+                    <div class="live-indicator">
+                        <div class="pulse"></div>
+                        <span>LIVE UPDATES</span>
+                    </div>
+                </div>
+                <div class="tracker-grid">
+                    <div class="tracker-item">
+                        <div class="tracker-label">Total Shelters Active</div>
+                        <div class="tracker-value">12</div>
+                    </div>
+                    <div class="tracker-item">
+                        <div class="tracker-label">People Sheltered</div>
+                        <div class="tracker-value">1,847</div>
+                    </div>
+                    <div class="tracker-item">
+                        <div class="tracker-label">Meals Served Today</div>
+                        <div class="tracker-value">3,692</div>
+                    </div>
+                    <div class="tracker-item">
+                        <div class="tracker-label">Volunteers Active</div>
+                        <div class="tracker-value">284</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Shelter Details -->
+    <section class="shelter-details">
+        <div class="container">
+            <h2 class="section-title">Shelter-Specific Resources</h2>
+            <p class="section-subtitle">Detailed information about supplies and needs at each shelter location</p>
+            
+            <div class="shelter-tabs">
+                <button class="shelter-tab active" onclick="showShelter('greenwood')">Greenwood High School</button>
+                <button class="shelter-tab" onclick="showShelter('community')">Community Center</button>
+                <button class="shelter-tab" onclick="showShelter('stadium')">City Stadium</button>
+                <button class="shelter-tab" onclick="showShelter('stmary')">St. Mary's Church</button>
+            </div>
+            
+            <!-- Greenwood High School -->
+            <div id="greenwood" class="shelter-content active">
+                <div class="shelter-info">
+                    <h3 class="shelter-name">Greenwood High School</h3>
+                    <div class="shelter-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>123 Education Lane, Greenwood</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-users"></i>
+                            <span>Capacity: 300 people | Current: 245</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-phone"></i>
+                            <span>Contact: (555) 123-4567</span>
+                        </div>
+                    </div>
+                    <p>This shelter has adequate space and good facilities including separate areas for families, medical assistance station, and children's play area.</p>
+                </div>
+                
+                <div class="resource-categories">
+                    <!-- Food Supplies -->
+                    <div class="category-card">
+                        <div class="category-header">
+                            <i class="fas fa-utensils"></i>
+                            <h3>Food Supplies</h3>
+                        </div>
+                        <div class="category-body">
+                            <div class="supply-item">
+                                <span>Meals (per day)</span>
+                                <div class="supply-status">
+                                    <div class="status-dot status-high"></div>
+                                    <span>500 available</span>
+                                </div>
+                            </div>
+                            <div class="supply-item">
+                                <span>Drinking Water</span>
+                                <div class="supply-status">
+                                    <div class="status-dot status-high"></div>
+                                    <span>Adequate supply</span>
+                                </div>
+                            </div>
+                            <div class="supply-item">
+                                <span>Baby Formula</span>
+                                <div class="supply-status">
+                                    <div class="status-dot status-medium"></div>
+                                    <span>Limited stock</span>
+                                </div>
+                            </div>
+                            <div class="supply-item">
+                                <span>Special Dietary Needs</span>
+                                <div class="supply-status">
+                                    <div class="status-dot status-low"></div>
+                                    <span>Urgently needed</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Women's Essentials -->
+                    <div class="category-card">
+                        <div class="category-header">
+                            <i class="fas fa-female"></i>
+                            <h3>Women's Essentials</h3>
+                        </div>
+                        <div class="category-body">
+                            <div class="supply-item">
+                                <span>Sanitary Products</span>
+                                <div class="supply-status">
+                                    <div class="status-dot status-high"></div>
+                                    <span>Good supply</span>
+                                </div>
+                            </div>
+                            <div class="supply-item">
+                                <span>Maternity Items</span>
+                                <div class="supply-status">
+                                    <div class="status-dot status-medium"></div>
+                                    <span>Limited availability</span>
+                                </div>
+                            </div>
+                            <div class="supply-item">
+                                <span>Privacy Screens</span>
+                                <div class="supply-status">
+                                    <div class="status-dot status-high"></div>
+                                    <span>Available</span>
+                                </div>
+                            </div>
+                            <div class="supply-item">
+                                <span>Breastfeeding Area</span>
+                                <div class="supply-status">
+                                    <div class="status-dot status-high"></div>
+                                    <span>Designated space</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Clothing & Bedding -->
+                    <div class="category-card">
+                        <div class="category-header">
+                            <i class="fas fa-tshirt"></i>
+                            <h3>Clothing & Bedding</h3>
+                        </div>
+                        <div class="category-body">
+                            <div class="supply-item">
+                                <span>Blankets</span>
+                                <div class="supply-status">
+                                    <div class="status-dot status-high"></div>
+                                    <span>Sufficient</span>
+                                </div>
+                            </div>
+                            <div class="supply-item">
+                                <span>Winter Clothing</span>
+                                <div class="supply-status">
+                                    <div class="status-dot status-low"></div>
+                                    <span>Urgently needed</span>
+                                </div>
+                            </div>
+                            <div class="supply-item">
+                                <span>Children's Clothing</span>
+                                <div class="supply-status">
+                                    <div class="status-dot status-medium"></div>
+                                    <span>Moderate supply</span>
+                                </div>
+                            </div>
+                            <div class="supply-item">
+                                <span>Footwear</span>
+                                <div class="supply-status">
+                                    <div class="status-dot status-medium"></div>
+                                    <span>Limited sizes</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Other shelters would follow similar structure -->
+        </div>
+    </section>
+
+    <!-- Essential Supplies -->
+    <section class="essential-supplies">
+        <div class="container">
+            <h2 class="section-title">Essential Camp Supplies Needed</h2>
+            <p class="section-subtitle">These items are critically needed across all shelters</p>
+            
+            <div class="supplies-grid">
+                <div class="supply-card">
+                    <i class="fas fa-pump-medical supply-icon"></i>
+                    <h3>Hygiene Kits</h3>
+                    <p>Soap, toothpaste, toothbrushes, sanitary products</p>
+                    <div class="availability low">URGENT</div>
+                </div>
+                
+                <div class="supply-card">
+                    <i class="fas fa-baby supply-icon"></i>
+                    <h3>Baby Supplies</h3>
+                    <p>Formula, diapers, baby food, wipes</p>
+                    <div class="availability low">URGENT</div>
+                </div>
+                
+                <div class="supply-card">
+                    <i class="fas fa-prescription-bottle supply-icon"></i>
+                    <h3>Medications</h3>
+                    <p>Chronic condition medications, first aid supplies</p>
+                    <div class="availability medium">NEEDED</div>
+                </div>
+                
+                <div class="supply-card">
+                    <i class="fas fa-blanket supply-icon"></i>
+                    <h3>Warm Clothing</h3>
+                    <p>Winter jackets, sweaters, socks, blankets</p>
+                    <div class="availability low">URGENT</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>RescueHub Connect</h3>
+                    <p>Your centralized platform for flood disaster resources and coordination.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Find Resources</a></li>
+                        <li><a href="#">Emergency Alerts</a></li>
+                        <li><a href="#">Volunteer</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Emergency Hotline: 1-800-RESCUE</a></li>
+                        <li><a href="#">Email: help@rescuehub.org</a></li>
+                        <li><a href="#">Partner With Us</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 RescueHub Connect. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Shelter tab functionality
+        function showShelter(shelterId) {
+            // Hide all shelter contents
+            const shelterContents = document.querySelectorAll('.shelter-content');
+            shelterContents.forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Show selected shelter content
+            document.getElementById(shelterId).classList.add('active');
+            
+            // Update active tab
+            const shelterTabs = document.querySelectorAll('.shelter-tab');
+            shelterTabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            event.target.classList.add('active');
+        }
+        
+        // Simulate live updates
+        function updateLiveTracker() {
+            const mealsElement = document.querySelector('.tracker-value:nth-child(2)');
+            const currentMeals = parseInt(mealsElement.textContent.replace(/,/g, ''));
+            mealsElement.textContent = (currentMeals + 23).toLocaleString();
+            
+            const peopleElement = document.querySelector('.tracker-value:nth-child(1)');
+            const currentPeople = parseInt(peopleElement.textContent.replace(/,/g, ''));
+            peopleElement.textContent = (currentPeople + 5).toLocaleString();
+        }
+        
+        // Update every 30 seconds
+        setInterval(updateLiveTracker, 30000);
+        
+        // Emergency button alert
+        document.querySelector('.emergency-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('Emergency services have been notified. Help is on the way. Please stay on the line if possible.');
+        });
+    </script>
+</body>
+</html>
